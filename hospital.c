@@ -28,7 +28,7 @@ int main(){
 	media_servicio = 12;
 	tasa_poisson = 4;
 	k_sillas = 35;
-
+	inicializar();
 	for (int n = 1; n <= 60; n++){
 		llegadas();
 
