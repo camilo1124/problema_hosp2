@@ -8,7 +8,7 @@
 #define OCUPADO		1
 #define LIBRE		0
 
-double sim_time,tipo_even_sig,tiempo_sig_evt[3],media_servicio,prob;
+double media_servicio,prob;
 int muestra,pacientes_acum,sin_silla,k_sillas,tasa_poisson,estado_sistema;
 float tiempo_acum;
 
@@ -27,9 +27,9 @@ float expon(float media);
 int main(){
 	media_servicio = 12;
 	tasa_poisson = 4;
-	k_sillas = 35;
+	k_sillas = 30;
 	inicializar();
-	for (int n = 1; n <= 60; n++){
+	for (int hora = 1; hora <= 120; hora++){
 		llegadas();
 
 	}
