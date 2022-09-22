@@ -1,0 +1,13 @@
+Simulacion del comportamiento del hospital
+
+Tipo de cola fifo M/M/1
+
+Promedio de pacientes por hora (poisson): 4
+Tiempo medio de servicio o atencion medica (exp): 12.0
+Horas de cada simulacion de comportamiento hospital: 120
+Objetivo: Determinar el numero de sillas minimo para que la probabilidad
+de que un paciente llegue y espere de pie sea inferior al 0.10
+
+Muestra recogida - Pacientes en la sala de espera : 413
+Numero de sillas minimo: 18
+Probabilidad obtenida: 0.007264
