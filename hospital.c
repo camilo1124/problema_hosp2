@@ -9,8 +9,8 @@
 #define LIBRE		0
 
 double media_servicio,prob;
-int muestra,pacientes_acum,sin_silla,k_sillas,tasa_poisson,estado_sistema;
-float tiempo_acum;
+int muestra,pacientes_acum,sin_silla,k_sillas,tasa_poisson,estado_sistema,lim_horas;
+float tiempo_acum,probabilidad_resp;
 
 FILE *infile,*outfile;
 
@@ -25,24 +25,54 @@ int poisson_inv(float r);
 float expon(float media);
 
 int main(){
-	media_servicio = 12;
-	tasa_poisson = 4;
-	k_sillas = 30;
-	inicializar();
-	for (int hora = 1; hora <= 120; hora++){
-		llegadas();
 
+	infile  = fopen("hospital.in","r");
+	outfile = fopen("hospital.out","w");
+	k_sillas = 0;
+
+	fscanf(infile, "%lf %d %d", &media_servicio, &tasa_poisson,&lim_horas);
+
+	fprintf(outfile, "Simulacion del comportamiento del hospital\n\n");
+	fprintf(outfile, "Tipo de cola fifo M/M/1\n\n");
+	fprintf(outfile, "Promedio de pacientes por hora (poisson): %d\n",tasa_poisson);
+	fprintf(outfile, "Tiempo medio de servicio o atencion medica (exp): %.1lf\n", media_servicio);
+	fprintf(outfile, "Horas de cada simulacion de comportamiento hospital: %d",lim_horas);
+
+	probabilidad_resp = 1;
+
+	while (probabilidad_resp > 0.1){
+		
+
+		inicializar();
+		for (int hora = 1; hora <= lim_horas; hora++){
+			llegadas();
+
+		}
+		k_sillas++;
+		probabilidad_resp = (float)sin_silla/(float)muestra;
+		
 	}
-	float probabilidad_resp = (float)sin_silla/(float)muestra;
-	printf("la probabilidad es %f \n",probabilidad_resp);
-	printf("Tamano de la muestra: %d \n",muestra);
+	k_sillas--;
 
+	reporte();
+
+	fclose(infile);
+	fclose(outfile);
 	return 0;
+}
+
+void reporte(){
+	fprintf(outfile,"\nObjetivo: Determinar el numero de sillas minimo para que la probabilidad\n");
+	fprintf(outfile,"de que un paciente llegue y espere de pie sea inferior al 0.10");
+	fprintf(outfile, "\n\nMuestra recogida - Pacientes en la sala de espera : %d\n",muestra);
+	fprintf(outfile, "Numero de sillas minimo: %d\n", k_sillas);
+	fprintf(outfile, "Probabilidad obtenida: %f\n",probabilidad_resp);
 }
 
 void inicializar(){
 	
-	/*Inicializar el reloj de la simulacion*/
+	/*Inicializa las variables del sistema */
+	
 	estado_sistema = LIBRE;
 	muestra = 0;
 	pacientes_acum = 0;
@@ -77,7 +107,7 @@ void llegadas(){
 
 void salidas(int grupo,float servicios,float servicios_hora){
 	for (int i = 1; i <= grupo; i++){
-		servicios = expon(12);
+		servicios = expon(media_servicio);
 		if ((servicios_hora + servicios) > 60){
 			tiempo_acum = (servicios_hora + servicios) - 60;
 			servicios_hora = 60.0;
@@ -104,7 +134,7 @@ double* f_poisson(){
 		for (int fac = 1; fac <= x; fac++){
 			x_fac = x_fac * fac;
 		}
-		f_x[x] = (pow(exp(1),-4) * pow(4,x)) / x_fac;
+		f_x[x] = (pow(exp(1),-tasa_poisson) * pow(tasa_poisson,x)) / x_fac;
 	}
 	return (f_x);
 }
